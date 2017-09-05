@@ -1,12 +1,13 @@
 # Makefile
 all:
 
-hw: hw.c
-	gcc hw.c -o hw
 
 Fibonacci: Fibonacci.c
-	gcc Fibonacci.c -o Fibonacci
+	gcc Fibonacci.c -o Fibonacci.out
+
+count_vowels: count_vowels.c
+	gcc count_vowels.c -o count_vowels.out
 
 clean:
-	rm -f hw
-	rm *~ #*#
+	rm -f *.out
+	# rm *~ #*#
