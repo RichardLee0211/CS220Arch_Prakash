@@ -1,0 +1,43 @@
+# lab3
+```C
+struct bad_struct{
+    short s1;
+    long l1;
+    short s2;
+};
+
+struct good_struct{
+    short s1;
+    short s2;
+    long l1;
+};
+```
+
+output:
+size of good_struct: 16
+size of bad_struct: 24
+address of good_struct: 0x7fff5dd219c8
+address of bad_struct: 0x7fff5dd219b0
+
+myAnswer:
+Because most compilers will "pad" the structure (as if with extra, invisible fields) like this:
+    +-------+-------+-------+-------+
+    |   short       | pad1          |
+    +-------+-------+-------+-------+
+    |           long                |
+    +-------+-------+-------+-------+
+    |   short       | pad2          |
+    +-------+-------+-------+-------+
+
+output:
+```
+union unit{
+    char c;
+    int i;
+    long l;
+};
+```
+
+(lldb) x/32b &u
+0x7fff5fbff958: 0x4f 0x76 0x65 0x72 0x6c 0x61 0x79 0x00
+0x7fff5fbff960: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
