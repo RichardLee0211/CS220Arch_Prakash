@@ -18,6 +18,11 @@ union unit{
     long l;
 };
 
+
+unsigned int foo(int x[]){
+    return sizeof(x);
+}
+
 int main(){
     struct good_struct gs;
     struct bad_struct bs;
@@ -32,13 +37,9 @@ int main(){
     printf("address of u.i: %p\n", &u.i);
     printf("address of u.l: %p\n", &u.l);
 
-    scanf("%lu", &u.l);
-    printf("size of u now: %lu\n", sizeof(u));
-    printf("address of u.c now: %p\n", &u.c);
-    printf("address of u.i now: %p\n", &u.i);
-    printf("address of u.l now: %p\n", &u.l);
+    int array[30];
+    printf("size of array: %lu\n", sizeof(array));
+    printf("size of array: %lu\n", foo(array));
 
     return 0;
-
-
 }

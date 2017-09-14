@@ -29,7 +29,6 @@ Because most compilers will "pad" the structure (as if with extra, invisible fie
     |   short       | pad2          |
     +-------+-------+-------+-------+
 
-output:
 ```
 union unit{
     char c;
@@ -37,7 +36,35 @@ union unit{
     long l;
 };
 ```
+output:
+ize of u now: 8
+address of u.c now: 0x7fff5e6d39a8
+address of u.i now: 0x7fff5e6d39a8
+address of u.l now: 0x7fff5e6d39a8
 
-(lldb) x/32b &u
+(lldb) x/16b &u
 0x7fff5fbff958: 0x4f 0x76 0x65 0x72 0x6c 0x61 0x79 0x00
 0x7fff5fbff960: 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+
+Answer:
+printf function will found address of union member, like u.i, and read byte according to format, like %d is 4 bytes.
+
+for Union, programmer can use it to store types that never use at the sametime. Like studentID and "unsigned" chars, for this case, student ID and "unsigned" chars doesn't exist at the same time.
+
+for C, compiler won't complain if programmer go out of array.
+to pass length of array, sizeof(array)/sizeof(int)
+
+int array[10]
+isize of array: 40
+size of array: 8
+
+int array[20]
+size of array: 80
+size of array: 8
+
+int array[30]
+size of array: 120
+size of array: 8
+
+myExplain:
+In main(), sizeof(array) would know to length of array because it's define in main. But in foo(), all array means is a pointer, and pointer in 64bit is 8 bytes
