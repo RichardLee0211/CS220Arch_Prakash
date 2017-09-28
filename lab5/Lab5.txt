@@ -1,0 +1,14 @@
+Allocating 40 bytes ...
+Successfully allocated at 0x7fab80402600
+free()ing memory at 0x7fab80402600...DONE
+
+_logger_malloc:
+100000e50:	55 	pushq	%rbp
+
+_logger_free:
+100000ec0:	55 	pushq	%rbp
+
+dyld: Library not loaded: libshare.so
+  Referenced from: /Users/richardlee/Code/cs220/cs220mytest/lab5/./main_shared
+    Reason: image not found
+    [3]    21183 abort      ./main_shared >> Lab5.txt
