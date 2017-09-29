@@ -12,3 +12,11 @@ dyld: Library not loaded: libshare.so
   Referenced from: /Users/richardlee/Code/cs220/cs220mytest/lab5/./main_shared
     Reason: image not found
     [3]    21183 abort      ./main_shared >> Lab5.txt
+main_shared:
+	libshare.so (compatibility version 0.0.0, current version 0.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.51.1)
+main_shared:
+	libshare.so (compatibility version 0.0.0, current version 0.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.51.1)
+main_static:
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.51.1)
