@@ -12,11 +12,18 @@ dyld: Library not loaded: libshare.so
   Referenced from: /Users/richardlee/Code/cs220/cs220mytest/lab5/./main_shared
     Reason: image not found
     [3]    21183 abort      ./main_shared >> Lab5.txt
-main_shared:
-	libshare.so (compatibility version 0.0.0, current version 0.0.0)
-	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.51.1)
-main_shared:
-	libshare.so (compatibility version 0.0.0, current version 0.0.0)
-	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.51.1)
-main_static:
-	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.51.1)
+
+./main_shared: error while loading shared libraries: libshared.so: cannot open shared object file: No such file or directory
+
+	linux-vdso.so.1 (0x00007ffc7d198000)
+	libshared.so => not found
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f08303a9000)
+	/lib64/ld-linux-x86-64.so.2 (0x0000565281487000)
+	linux-vdso.so.1 (0x00007fff03d6d000)
+	libshared.so => /home/wli100/Code/cs220/cs220mytest/lab5/lib/libshared.so (0x00007fcc22005000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fcc21c3a000)
+
+	/lib64/ld-linux-x86-64.so.2 (0x000055f7407c5000)
+	linux-vdso.so.1 (0x00007ffc2d1f3000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f83c7e63000)
+	/lib64/ld-linux-x86-64.so.2 (0x00005606391d2000)
