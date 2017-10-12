@@ -6,7 +6,7 @@
 
 extern Node* reverse_asm(Node *head, unsigned int offset);
 
-#define NUM_NODES 20
+#define NUM_NODES 1000000
 
 int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval *t1)
 {
@@ -94,9 +94,27 @@ int main()
 	offset = (unsigned int)(&((Node *)0)->ptr);
 	
 	head = gen_rand_list(NUM_NODES);
+
+	/*
 	print_list(head);
 	revhead = reverse_asm(head, offset);
 	printf("****REV****\n");
 	print_list(revhead);
+	*/
+
+	printf("\nNUM_NODES: %d\n", NUM_NODES);
+
+	gettimeofday(&tvStart, NULL);
+	revhead = reverse_asm(head, offset);
+	gettimeofday(&tvEnd, NULL);
+	timeval_subtract(&tvDiff, &tvEnd, &tvStart);
+	timeval_print("ASM: ", &tvDiff);
+
+	gettimeofday(&tvStart, NULL);
+	head = reverse_C(revhead);
+	gettimeofday(&tvEnd, NULL);
+	timeval_subtract(&tvDiff, &tvEnd, &tvStart);
+	timeval_print("C: ", &tvDiff);
+	
 	return 0; 
 }

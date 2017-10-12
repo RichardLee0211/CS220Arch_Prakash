@@ -1,0 +1,164 @@
+00000add <reverse_asm>:
+ add:	53                   	push   ebx
+ ade:	b8 00 00 00 00       	mov    eax,0x0
+ ae3:	89 c3                	mov    ebx,eax
+ ae5:	89 c1                	mov    ecx,eax
+ ae7:	89 c2                	mov    edx,eax
+ ae9:	8b 44 24 08          	mov    eax,DWORD PTR [esp+0x8]
+ aed:	83 f8 00             	cmp    eax,0x0
+ af0:	74 1b                	je     b0d <null_ret>
+ af2:	03 44 24 0c          	add    eax,DWORD PTR [esp+0xc]
+ af6:	89 c3                	mov    ebx,eax
+
+00000af8 <while_start>:
+ af8:	83 fb 00             	cmp    ebx,0x0
+ afb:	74 0a                	je     b07 <while_done>
+ afd:	8b 0b                	mov    ecx,DWORD PTR [ebx]
+ aff:	89 13                	mov    DWORD PTR [ebx],edx
+ b01:	89 da                	mov    edx,ebx
+ b03:	89 cb                	mov    ebx,ecx
+ b05:	eb f1                	jmp    af8 <while_start>
+
+00000b07 <while_done>:
+ b07:	89 d0                	mov    eax,edx
+ b09:	2b 44 24 0c          	sub    eax,DWORD PTR [esp+0xc]
+
+00000b0d <null_ret>:
+ b0d:	5b                   	pop    ebx
+ b0e:	c3                   	ret    
+ b0f:	90                   	nop
+
+total: 32 lines 
+
+./driver
+
+# with -o2
+
+NUM_NODES: 10
+ASM:  0 sec, 000000 micro sec
+C:  0 sec, 000000 micro sec
+
+NUM_NODES: 100
+ASM:  0 sec, 000000 micro sec
+C:  0 sec, 000000 micro sec
+
+NUM_NODES: 1000
+ASM:  0 sec, 000004 micro sec
+C:  0 sec, 000007 micro sec
+
+NUM_NODES: 10000
+ASM:  0 sec, 000026 micro sec
+C:  0 sec, 000061 micro sec
+
+NUM_NODES: 100000
+ASM:  0 sec, 000418 micro sec
+C:  0 sec, 000978 micro sec
+
+NUM_NODES: 1000000
+ASM:  0 sec, 002434 micro sec
+C:  0 sec, 004960 micro sec
+
+0000094f <reverse_C>:
+ 94f:	55                   	push   ebp
+ 950:	89 e5                	mov    ebp,esp
+ 952:	83 ec 10             	sub    esp,0x10
+ 955:	e8 7f 01 00 00       	call   ad9 <__x86.get_pc_thunk.ax>
+ 95a:	05 a6 16 00 00       	add    eax,0x16a6
+ 95f:	c7 45 f8 00 00 00 00 	mov    DWORD PTR [ebp-0x8],0x0
+ 966:	8b 45 f8             	mov    eax,DWORD PTR [ebp-0x8]
+ 969:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+ 96c:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+ 96f:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+ 972:	83 7d 08 00          	cmp    DWORD PTR [ebp+0x8],0x0
+ 976:	75 07                	jne    97f <reverse_C+0x30>
+ 978:	b8 00 00 00 00       	mov    eax,0x0
+ 97d:	eb 38                	jmp    9b7 <reverse_C+0x68>
+ 97f:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
+ 982:	83 c0 04             	add    eax,0x4
+ 985:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+ 988:	eb 1c                	jmp    9a6 <reverse_C+0x57>
+ 98a:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+ 98d:	8b 00                	mov    eax,DWORD PTR [eax]
+ 98f:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+ 992:	8b 55 f8             	mov    edx,DWORD PTR [ebp-0x8]
+ 995:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+ 998:	89 10                	mov    DWORD PTR [eax],edx
+ 99a:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+ 99d:	89 45 f8             	mov    DWORD PTR [ebp-0x8],eax
+ 9a0:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+ 9a3:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+ 9a6:	83 7d fc 00          	cmp    DWORD PTR [ebp-0x4],0x0
+ 9aa:	75 de                	jne    98a <reverse_C+0x3b>
+ 9ac:	ff 75 f8             	push   DWORD PTR [ebp-0x8]
+ 9af:	e8 00 fe ff ff       	call   7b4 <get_head>
+ 9b4:	83 c4 04             	add    esp,0x4
+ 9b7:	c9                   	leave  
+ 9b8:	c3                   	ret    
+
+total: 35
+
+# without -o2
+
+NUM_NODES: 10
+ASM:  0 sec, 000000 micro sec
+C:  0 sec, 000001 micro sec
+
+NUM_NODES: 100
+ASM:  0 sec, 000000 micro sec
+C:  0 sec, 000001 micro sec
+
+NUM_NODES: 1000
+ASM:  0 sec, 000003 micro sec
+C:  0 sec, 000006 micro sec
+
+NUM_NODES: 10000
+ASM:  0 sec, 000024 micro sec
+C:  0 sec, 000057 micro sec
+
+NUM_NODES: 100000
+ASM:  0 sec, 000252 micro sec
+C:  0 sec, 000579 micro sec
+
+NUM_NODES: 1000000
+ASM:  0 sec, 002620 micro sec
+C:  0 sec, 005520 micro sec
+
+
+0000094f <reverse_C>:
+ 94f:	55                   	push   ebp
+ 950:	89 e5                	mov    ebp,esp
+ 952:	83 ec 10             	sub    esp,0x10
+ 955:	e8 7f 01 00 00       	call   ad9 <__x86.get_pc_thunk.ax>
+ 95a:	05 a6 16 00 00       	add    eax,0x16a6
+ 95f:	c7 45 f8 00 00 00 00 	mov    DWORD PTR [ebp-0x8],0x0
+ 966:	8b 45 f8             	mov    eax,DWORD PTR [ebp-0x8]
+ 969:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+ 96c:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+ 96f:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+ 972:	83 7d 08 00          	cmp    DWORD PTR [ebp+0x8],0x0
+ 976:	75 07                	jne    97f <reverse_C+0x30>
+ 978:	b8 00 00 00 00       	mov    eax,0x0
+ 97d:	eb 38                	jmp    9b7 <reverse_C+0x68>
+ 97f:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
+ 982:	83 c0 04             	add    eax,0x4
+ 985:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+ 988:	eb 1c                	jmp    9a6 <reverse_C+0x57>
+ 98a:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+ 98d:	8b 00                	mov    eax,DWORD PTR [eax]
+ 98f:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+ 992:	8b 55 f8             	mov    edx,DWORD PTR [ebp-0x8]
+ 995:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+ 998:	89 10                	mov    DWORD PTR [eax],edx
+ 99a:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+ 99d:	89 45 f8             	mov    DWORD PTR [ebp-0x8],eax
+ 9a0:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+ 9a3:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+ 9a6:	83 7d fc 00          	cmp    DWORD PTR [ebp-0x4],0x0
+ 9aa:	75 de                	jne    98a <reverse_C+0x3b>
+ 9ac:	ff 75 f8             	push   DWORD PTR [ebp-0x8]
+ 9af:	e8 00 fe ff ff       	call   7b4 <get_head>
+ 9b4:	83 c4 04             	add    esp,0x4
+ 9b7:	c9                   	leave  
+ 9b8:	c3                   	ret    
+
+total: 35
