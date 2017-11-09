@@ -494,23 +494,35 @@ Disassembly of section .text:
      ad6:	83 ec 04             	sub    esp,0x4
      ad9:	68 00 02 00 00       	push   0x200
      ade:	6a 00                	push   0x0
+     // ?? address of the array
      ae0:	8d 85 e0 fd ff ff    	lea    eax,[ebp-0x220]
      ae6:	50                   	push   eax
      ae7:	e8 84 fb ff ff       	call   670 <memset@plt>
      aec:	83 c4 10             	add    esp,0x10
+     // malloc need in int, 4B
      aef:	83 ec 0c             	sub    esp,0xc
      af2:	6a 18                	push   0x18
      af4:	e8 07 fb ff ff       	call   600 <malloc@plt>
      af9:	83 c4 10             	add    esp,0x10
+
      afc:	89 45 e4             	mov    DWORD PTR [ebp-0x1c],eax
      aff:	83 ec 04             	sub    esp,0x4
      b02:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      b05:	68 ff 01 00 00       	push   0x1ff
+     // [ebp-0x220] it store the address of input char*,
+     // get from keyboard
      b0a:	8d 85 e0 fd ff ff    	lea    eax,[ebp-0x220]
      b10:	50                   	push   eax
      b11:	e8 ca fa ff ff       	call   5e0 <fgets@plt>
      b16:	83 c4 10             	add    esp,0x10
-     // strange partern
+     // strange partern, address of array
+     // lea -load effetive address
+     // $ebp-0x8 $edi 80
+     // $ebp-0xc $esi 0
+     // $ebp-0x10 $ecx -8
+     // $ebp-0x14 $edx 0
+     // $ebp-0x18 $eax 80
+     // $ebp-0x1c 16
      b19:	8b 45 e4             	mov    eax,DWORD PTR [ebp-0x1c]
      b1c:	8d 78 14             	lea    edi,[eax+0x14]
      b1f:	8b 45 e4             	mov    eax,DWORD PTR [ebp-0x1c]
@@ -521,25 +533,31 @@ Disassembly of section .text:
      b2e:	8d 50 08             	lea    edx,[eax+0x8]
      b31:	8b 45 e4             	mov    eax,DWORD PTR [ebp-0x1c]
      b34:	83 c0 04             	add    eax,0x4
+     // push address of array of element
+     // inside element, 0, 0, 8. 8. -88, 16
      b37:	57                   	push   edi
      b38:	56                   	push   esi
      b39:	51                   	push   ecx
      b3a:	52                   	push   edx
      b3b:	50                   	push   eax
      b3c:	ff 75 e4             	push   DWORD PTR [ebp-0x1c]
+     // format info char* , "%d %d %d %d %d %d"
      b3f:	8d 83 f1 e3 ff ff    	lea    eax,[ebx-0x1c0f]
      b45:	50                   	push   eax
+     // input char*
      b46:	8d 85 e0 fd ff ff    	lea    eax,[ebp-0x220]
      b4c:	50                   	push   eax
+     // maybe scanf from input string, sscanf return the number that recive
      b4d:	e8 fe fa ff ff       	call   650 <__isoc99_sscanf@plt>
      b52:	83 c4 20             	add    esp,0x20
+     // if 6 number recived
      b55:	89 45 e0             	mov    DWORD PTR [ebp-0x20],eax
      b58:	83 7d e0 06          	cmp    DWORD PTR [ebp-0x20],0x6
      b5c:	74 07                	je     b65 <read_6_numbers+0xa6>
-     // 0x0 in eas is a fail
+     // 0x0 in eax is a fail
      b5e:	b8 00 00 00 00       	mov    eax,0x0
      b63:	eb 03                	jmp    b68 <read_6_numbers+0xa9>
-     // what's this ??
+     // if 6 number recived, return address of array
      b65:	8b 45 e4             	mov    eax,DWORD PTR [ebp-0x1c]
      // return part
      b68:	8d 65 f4             	lea    esp,[ebp-0xc]
@@ -785,7 +803,9 @@ Disassembly of section .text:
      e37:	81 c3 c9 21 00 00    	add    ebx,0x21c9
      e3d:	83 ec 0c             	sub    esp,0xc
      e40:	ff 75 08             	push   DWORD PTR [ebp+0x8]
-     // maybe the key function
+     // well, don't key function to solve the problem, but it helps,
+     // if 6 number recived, return address of char*
+     // else return NULL, which is 0x0
      e43:	e8 77 fc ff ff       	call   abf <read_6_numbers>
      e48:	83 c4 10             	add    esp,0x10
      // $eax the result, if equal to 0x0, explode
@@ -793,35 +813,48 @@ Disassembly of section .text:
      e4e:	83 7d f4 00          	cmp    DWORD PTR [ebp-0xc],0x0
      e52:	75 05                	jne    e59 <phase1+0x2e>
      e54:	e8 a7 f9 ff ff       	call   800 <explode>
+     // if $eax != NULL,
+     // the 1st element
      e59:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      e5c:	8b 00                	mov    eax,DWORD PTR [eax]
-     e5e:	83 f8 13             	cmp    eax,0x13
+     e5e:	83 f8 13             	cmp    eax,0x13 // 19
      e61:	75 62                	jne    ec5 <phase1+0x9a>
+
+     // the 2nd
      e63:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      e66:	83 c0 04             	add    eax,0x4
      e69:	8b 00                	mov    eax,DWORD PTR [eax]
-     e6b:	83 f8 1d             	cmp    eax,0x1d
+     e6b:	83 f8 1d             	cmp    eax,0x1d // 29
      e6e:	75 55                	jne    ec5 <phase1+0x9a>
+
+     // the 3rd
      e70:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      e73:	83 c0 08             	add    eax,0x8
      e76:	8b 00                	mov    eax,DWORD PTR [eax]
-     e78:	83 f8 04             	cmp    eax,0x4
+     e78:	83 f8 04             	cmp    eax,0x4 // 4
      e7b:	75 48                	jne    ec5 <phase1+0x9a>
+
+     // the 4th
      e7d:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      e80:	83 c0 0c             	add    eax,0xc
      e83:	8b 00                	mov    eax,DWORD PTR [eax]
-     e85:	83 f8 11             	cmp    eax,0x11
+     e85:	83 f8 11             	cmp    eax,0x11 // 17
      e88:	75 3b                	jne    ec5 <phase1+0x9a>
+
+     // the 5th
      e8a:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      e8d:	83 c0 10             	add    eax,0x10
      e90:	8b 00                	mov    eax,DWORD PTR [eax]
-     e92:	85 c0                	test   eax,eax
+     e92:	85 c0                	test   eax,eax // bit operation &, 0
      e94:	75 2f                	jne    ec5 <phase1+0x9a>
+
+     // the 6th
      e96:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      e99:	83 c0 14             	add    eax,0x14
      e9c:	8b 00                	mov    eax,DWORD PTR [eax]
-     e9e:	83 f8 2a             	cmp    eax,0x2a
+     e9e:	83 f8 2a             	cmp    eax,0x2a // 42
      ea1:	75 22                	jne    ec5 <phase1+0x9a>
+
      ea3:	83 ec 0c             	sub    esp,0xc
      ea6:	ff 75 f4             	push   DWORD PTR [ebp-0xc]
      ea9:	e8 22 f7 ff ff       	call   5d0 <free@plt>
