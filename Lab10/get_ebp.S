@@ -7,6 +7,5 @@
 # 32bits version
 
 get_ebp:
-    push ebp
-    mov eax, esp
+    mov eax, ebp
     ret
