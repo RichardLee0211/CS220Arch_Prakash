@@ -1,3 +1,3 @@
 wli100
 19 29 4 17 0 42
-fasdf
+0 or 8 or 16 ... multipies of 8

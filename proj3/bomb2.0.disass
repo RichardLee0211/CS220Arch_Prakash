@@ -685,12 +685,15 @@ Disassembly of section .text:
      cd6:	c9                   	leave
      cd7:	c3                   	ret
 
+// just read one number
 00000cd8 <read_number>:
      cd8:	55                   	push   ebp
      cd9:	89 e5                	mov    ebp,esp
      cdb:	53                   	push   ebx
      cdc:	81 ec 14 02 00 00    	sub    esp,0x214
      ce2:	e8 e9 f9 ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
+
+     // string in heap
      ce7:	81 c3 19 23 00 00    	add    ebx,0x2319
      ced:	83 ec 04             	sub    esp,0x4
      cf0:	68 00 02 00 00       	push   0x200
@@ -699,6 +702,8 @@ Disassembly of section .text:
      cfd:	50                   	push   eax
      cfe:	e8 6d f9 ff ff       	call   670 <memset@plt>
      d03:	83 c4 10             	add    esp,0x10
+
+     // read from keyboard
      d06:	83 ec 04             	sub    esp,0x4
      d09:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      d0c:	68 ff 01 00 00       	push   0x1ff
@@ -706,15 +711,24 @@ Disassembly of section .text:
      d17:	50                   	push   eax
      d18:	e8 c3 f8 ff ff       	call   5e0 <fgets@plt>
      d1d:	83 c4 10             	add    esp,0x10
+
+     // int sscanf(const char* buffer, const char* format, ...)
+     //
      d20:	83 ec 04             	sub    esp,0x4
+     // destination string
      d23:	8d 45 f0             	lea    eax,[ebp-0x10]
      d26:	50                   	push   eax
+     // format "%u"
      d27:	8d 83 21 e4 ff ff    	lea    eax,[ebx-0x1bdf]
      d2d:	50                   	push   eax
+     // source buffer
      d2e:	8d 85 f0 fd ff ff    	lea    eax,[ebp-0x210]
      d34:	50                   	push   eax
      d35:	e8 16 f9 ff ff       	call   650 <__isoc99_sscanf@plt>
      d3a:	83 c4 10             	add    esp,0x10
+
+     // if eax==1, return [ebp-0x10]
+     // else, return [ebp-0x4]
      d3d:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
      d40:	83 7d f4 01          	cmp    DWORD PTR [ebp-0xc],0x1
      d44:	74 07                	je     d4d <read_number+0x75>
@@ -801,6 +815,7 @@ Disassembly of section .text:
      e2f:	83 ec 14             	sub    esp,0x14
      e32:	e8 99 f8 ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
      e37:	81 c3 c9 21 00 00    	add    ebx,0x21c9
+
      e3d:	83 ec 0c             	sub    esp,0xc
      e40:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      // well, don't key function to solve the problem, but it helps,
@@ -878,24 +893,37 @@ Disassembly of section .text:
      ed4:	83 ec 14             	sub    esp,0x14
      ed7:	e8 f4 f7 ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
      edc:	81 c3 24 21 00 00    	add    ebx,0x2124
+
+     // read one number to [ebp-0xc]
      ee2:	83 ec 0c             	sub    esp,0xc
      ee5:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      ee8:	e8 eb fd ff ff       	call   cd8 <read_number>
      eed:	83 c4 10             	add    esp,0x10
      ef0:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+
+     // [ebp-0x10] = [ebp-0xc] + [ebx+0x4c]
+     // [ebx+0x4c] 136 0x88
      ef3:	8b 93 4c 00 00 00    	mov    edx,DWORD PTR [ebx+0x4c]
      ef9:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      efc:	01 d0                	add    eax,edx
      efe:	89 45 f0             	mov    DWORD PTR [ebp-0x10],eax
+
+     // [ebp-0x14] = [ebp-0x10] / 8
      f01:	8b 45 f0             	mov    eax,DWORD PTR [ebp-0x10]
      f04:	c1 e8 03             	shr    eax,0x3
      f07:	89 45 ec             	mov    DWORD PTR [ebp-0x14],eax
+
+     // [ebp-0x14] = [ebp-0x14] * 8
      f0a:	c1 65 ec 03          	shl    DWORD PTR [ebp-0x14],0x3
+
+     // if [ebp-0x14] != [ebp-0x10], explode
      f0e:	8b 45 ec             	mov    eax,DWORD PTR [ebp-0x14]
      f11:	3b 45 f0             	cmp    eax,DWORD PTR [ebp-0x10]
      f14:	74 05                	je     f1b <phase2+0x4b>
      f16:	e8 e5 f8 ff ff       	call   800 <explode>
      f1b:	83 ec 0c             	sub    esp,0xc
+
+     // return
      f1e:	8d 83 aa e4 ff ff    	lea    eax,[ebx-0x1b56]
      f24:	50                   	push   eax
      f25:	e8 e6 f6 ff ff       	call   610 <puts@plt>
@@ -911,11 +939,13 @@ Disassembly of section .text:
      f36:	53                   	push   ebx
      f37:	83 ec 04             	sub    esp,0x4
      f3a:	e8 91 f7 ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
-     f3f:	81 c3 c1 20 00 00    	add    ebx,0x20c1
+     f3f:	81 c3 c1 20 00 00    	add    ebx,0x20c1 // ??
+
      f45:	83 ec 0c             	sub    esp,0xc
      f48:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      f4b:	e8 7a 03 00 00       	call   12ca <phase3_helper>
      f50:	83 c4 10             	add    esp,0x10
+
      f53:	83 ec 0c             	sub    esp,0xc
      f56:	8d 83 c8 e4 ff ff    	lea    eax,[ebx-0x1b38]
      f5c:	50                   	push   eax
@@ -1171,6 +1201,7 @@ Disassembly of section .text:
     1235:	e8 1b fb ff ff       	call   d55 <phase0>
     123a:	83 c4 10             	add    esp,0x10
 
+    // array of number
     123d:	83 ec 0c             	sub    esp,0xc
     1240:	ff 75 e4             	push   DWORD PTR [ebp-0x1c]
     1243:	e8 e3 fb ff ff       	call   e2b <phase1>
