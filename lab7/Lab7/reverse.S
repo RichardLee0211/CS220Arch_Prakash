@@ -36,7 +36,7 @@ while_start:
 	mov ecx, [ebx]
 
 	# *(unsigned long *)headptr = (unsigned long) new_headptr;
-	mov [ebx], edx 
+	mov [ebx], edx
 
 	# new_headptr = headptr;
 	mov edx, ebx
