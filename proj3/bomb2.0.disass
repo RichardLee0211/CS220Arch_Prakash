@@ -968,25 +968,33 @@ Disassembly of section .text:
      f69:	c9                   	leave
      f6a:	c3                   	ret
 
+// return argument + (argument-1) + (argument-2) + ... + 2 + 1
 00000f6b <phase4_helper>:
      f6b:	55                   	push   ebp
      f6c:	89 e5                	mov    ebp,esp
      f6e:	83 ec 08             	sub    esp,0x8
      f71:	e8 50 03 00 00       	call   12c6 <__x86.get_pc_thunk.ax>
      f76:	05 8a 20 00 00       	add    eax,0x208a
+
+     // argument != 0x0
      f7b:	83 7d 08 00          	cmp    DWORD PTR [ebp+0x8],0x0
      f7f:	75 07                	jne    f88 <phase4_helper+0x1d>
      f81:	b8 00 00 00 00       	mov    eax,0x0
      f86:	eb 19                	jmp    fa1 <phase4_helper+0x36>
+
+     // phase4_helper(argument-0x1)
      f88:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
      f8b:	83 e8 01             	sub    eax,0x1
      f8e:	83 ec 0c             	sub    esp,0xc
      f91:	50                   	push   eax
      f92:	e8 d4 ff ff ff       	call   f6b <phase4_helper>
      f97:	83 c4 10             	add    esp,0x10
+
+     // return argument+phase4_helper(argument-0x1)
      f9a:	89 c2                	mov    edx,eax
      f9c:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
      f9f:	01 d0                	add    eax,edx
+
      fa1:	c9                   	leave
      fa2:	c3                   	ret
 
@@ -997,30 +1005,47 @@ Disassembly of section .text:
      fa7:	83 ec 14             	sub    esp,0x14
      faa:	e8 21 f7 ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
      faf:	81 c3 51 20 00 00    	add    ebx,0x2051
+
+     // read a number saved as [ebp-0xc]
      fb5:	83 ec 0c             	sub    esp,0xc
      fb8:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      fbb:	e8 18 fd ff ff       	call   cd8 <read_number>
      fc0:	83 c4 10             	add    esp,0x10
      fc3:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+
+     // if [ebp-0xc] >= 0x1000, continue
      fc6:	81 7d f4 00 10 00 00 	cmp    DWORD PTR [ebp-0xc],0x1000
      fcd:	76 05                	jbe    fd4 <phase4+0x31>
      fcf:	e8 2c f8 ff ff       	call   800 <explode>
-     fd4:	8b 8b 4c 00 00 00    	mov    ecx,DWORD PTR [ebx+0x4c]
+
+     // assignment
+     fd4:	8b 8b 4c 00 00 00    	mov    ecx,DWORD PTR [ebx+0x4c] // ?? 0xce969388
      fda:	ba 1f 85 eb 51       	mov    edx,0x51eb851f
+
+     // ebx:eax = [ebx+0x4c]*0x51eb851f
      fdf:	89 c8                	mov    eax,ecx
-     fe1:	f7 e2                	mul    edx
+     fe1:	f7 e2                	mul    edx // edx:eax = ebx*reg
+
+     // [ebx+0x4c]-= edx/ 0x20 * 0x64
      fe3:	89 d0                	mov    eax,edx
      fe5:	c1 e8 05             	shr    eax,0x5
      fe8:	6b c0 64             	imul   eax,eax,0x64
      feb:	29 c1                	sub    ecx,eax
+
+     // [ebp-0xc] -= [ebx+0x4c] maybe 0x40
      fed:	89 c8                	mov    eax,ecx
      fef:	8b 55 f4             	mov    edx,DWORD PTR [ebp-0xc]
      ff2:	29 c2                	sub    edx,eax
+
+     // phase4_helper([ebp-0xc])
      ff4:	89 d0                	mov    eax,edx
      ff6:	83 ec 0c             	sub    esp,0xc
      ff9:	50                   	push   eax
      ffa:	e8 6c ff ff ff       	call   f6b <phase4_helper>
      fff:	83 c4 10             	add    esp,0x10
+
+     // phase4_helper(input-0x40), require 102, that would be 102+0x40=166
+     // if return is 0x1485, success
     1002:	3d 85 14 00 00       	cmp    eax,0x1485
     1007:	74 05                	je     100e <phase4+0x6b>
     1009:	e8 f2 f7 ff ff       	call   800 <explode>
