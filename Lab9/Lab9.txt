@@ -1,0 +1,22 @@
+
+page size is 4096
+./mem_access
+HDD ACCESS:  4 sec, 748644 micro sec
+./mem_access
+HDD ACCESS:  1 sec, 388483 micro sec
+./mem_access
+HDD ACCESS:  0 sec, 301503 micro sec
+./mem_access
+HDD ACCESS:  0 sec, 027075 micro sec
+./mem_access
+MEM SERIAL ACCESS:  0 sec, 008203 micro sec
+MEM PAGE STEP ACCESS:  0 sec, 025578 micro sec
+./mem_access
+MEM SERIAL ACCESS:  0 sec, 034713 micro sec
+MEM PAGE STEP ACCESS:  0 sec, 144884 micro sec
+./mem_access
+MEM SERIAL ACCESS:  0 sec, 294184 micro sec
+MEM PAGE STEP ACCESS:  0 sec, 915358 micro sec
+./mem_access
+MEM SERIAL ACCESS:  1 sec, 074390 micro sec
+MEM PAGE STEP ACCESS:  2 sec, 979479 micro sec

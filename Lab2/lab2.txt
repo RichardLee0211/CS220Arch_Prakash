@@ -1,0 +1,243 @@
+
+## 1. Secrets 1, 2, 3 and 4.
+```
+#include <stdlib .h>
+int gfoo = /∗ secret 1, -559038737 ∗/; 
+int main()
+{
+static int sfoo ;
+int lfoo ;
+int ∗dfoo = (int*) malloc(sizeof(int));
+sfoo = /∗ secret 2 */
+lfoo = /∗ secret 3 */
+∗dfoo = /∗secret 4 */
+return sfoo + lfoo + gfoo + ∗dfoo ;
+}
+```
+```
+   │0x5555555546b0 <main>                   push   %rbp                                          │
+   │0x5555555546b1 <main+1>                 mov    %rsp,%rbp                                     │
+B+>│0x5555555546b4 <main+4>                 sub    $0x10,%rsp                                    │
+   │0x5555555546b8 <main+8>                 mov    $0x4,%edi                                     │
+// 
+// int ∗dfoo = (int*) malloc(sizeof(int));
+   │0x5555555546bd <main+13>                callq  0x555555554560 <malloc@plt>                   │
+   │0x5555555546c2 <main+18>                mov    %rax,-0x8(%rbp)                               │
+// 
+// sfoo = /∗ secret 2 */
+   │0x5555555546c6 <main+22>                movl   $0xdeadc0de,0x200b24(%rip)        # 0x55555575│
+//
+// lfoo = /∗ secret 3 */
+   │0x5555555546d0 <main+32>                movl   $0xbadc0de5,-0xc(%rbp)                        │
+//
+// ∗dfoo = /∗secret 4 */
+   │0x5555555546d7 <main+39>                mov    -0x8(%rbp),%rax                               │
+   │0x5555555546db <main+43>                movl   $0xbadbeef5,(%rax)                            │
+//
+// add instruction
+   │0x5555555546e1 <main+49>                mov    0x200b0d(%rip),%edx        # 0x5555557551f4 <s│
+   │0x5555555546e7 <main+55>                mov    0x200953(%rip),%eax        # 0x555555755040 <g│
+   │0x5555555546ed <main+61>                add    %eax,%edx                                     │
+   │0x5555555546ef <main+63>                mov    -0xc(%rbp),%eax                               │
+   │0x5555555546f2 <main+66>                add    %eax,%edx                                     │
+   │0x5555555546f4 <main+68>                mov    -0x8(%rbp),%rax                               │
+   │0x5555555546f8 <main+72>                mov    (%rax),%eax                                   │
+   │0x5555555546fa <main+74>                add    %edx,%eax                                     │
+
+   │0x5555555546fc <main+76>                leaveq                                               │
+   │0x5555555546fd <main+77>                retq
+```
+
+for secrete 1:
+```
+Breakpoint 1, 0x00005555555546b4 in main ()
+(gdb) p gfoo
+$1 = -559038737
+```
+so secrete 1 = -559038737
+
+for secrete 2: 
+```
+// sfoo = /∗ secret 2 */
+   │0x5555555546c6 <main+22>                movl   $0xdeadc0de,0x200b24(%rip)        # 0x55555575│
+```
+so secrete 2 = 0xdeadc0de
+
+for secrete 3:
+```
+// lfoo = /∗ secret 3 */
+   │0x5555555546d0 <main+32>                movl   $0xbadc0de5,-0xc(%rbp)                        │
+```
+so secrete 3 = 0xdeadc0de
+
+for secrete 4:
+```
+// ∗dfoo = /∗secret 4 */
+   │0x5555555546d7 <main+39>                mov    -0x8(%rbp),%rax                               │
+   │0x5555555546db <main+43>                movl   $0xbadbeef5,(%rax)                            │
+```
+so secrete 4 = 0xbadbeef5
+
+## 2. Addresses of gfoo, sfoo, lfoo and dfoo.
+myAnswer:
+for gfoo:
+```
+(gdb) p &gfoo
+$2 = (<data variable, no debug info> *) 0x555555755040 <gfoo>
+```
+so address of gfoo = 0x555555755040
+
+for sfoo:
+```
+Breakpoint 2, 0x00005555555546d0 in main ()
+(gdb) p $rip
+$3 = (void (*)()) 0x5555555546d0 <main+32>
+```
+ 0x5555555546d0 + 0x200b24 = 0x5555557551f4
+so address of sfoo = 0x5555557551f4
+
+for lfoo:
+```
+(gdb) p/x $rbp
+$7 = 0x7fffffffe8c0
+```
+ 0x7fffffffe8c0 - 0xc =  0x7fffffffe8b4
+so address of lfoo = 0x7fffffffe8b4
+
+for dfoo:
+```
+(gdb) p/x $rbp
+$12 = 0x7fffffffe8c0
+```
+0x7fffffffe8c0 - 0x8 = 0x7fffffffe8b8
+so address of dfoo = 0x7fffffffe8b8
+
+## 3. Value of dfoo (which is the address that contains secret 4).
+```
+Breakpoint 5, 0x00005555555546c6 in main ()
+(gdb) p/x $rax
+$11 = 0x555555756010
+```
+so dfoo = 0x555555756010
+
+## 4. Start and end addresses of stack, heap and data section.
+```
+process 9040
+Mapped address spaces:
+
+          Start Addr           End Addr       Size     Offset objfile
+      0x555555554000     0x555555555000     0x1000        0x0 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/memory
+      0x555555754000     0x555555755000     0x1000        0x0 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/memory
+      0x555555755000     0x555555756000     0x1000     0x1000 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/memory
+      0x555555756000     0x555555777000    0x21000        0x0 [heap]
+      0x7ffff7a3a000     0x7ffff7bcf000   0x195000        0x0 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7bcf000     0x7ffff7dcf000   0x200000   0x195000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dcf000     0x7ffff7dd3000     0x4000   0x195000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dd3000     0x7ffff7dd5000     0x2000   0x199000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dd5000     0x7ffff7dd9000     0x4000        0x0
+      0x7ffff7dd9000     0x7ffff7dfc000    0x23000        0x0 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7fc7000     0x7ffff7fc9000     0x2000        0x0
+      0x7ffff7ff5000     0x7ffff7ff8000     0x3000        0x0
+      0x7ffff7ff8000     0x7ffff7ffa000     0x2000        0x0 [vvar]
+      0x7ffff7ffa000     0x7ffff7ffc000     0x2000        0x0 [vdso]
+      0x7ffff7ffc000     0x7ffff7ffd000     0x1000    0x23000 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7ffd000     0x7ffff7ffe000     0x1000    0x24000 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7ffe000     0x7ffff7fff000     0x1000        0x0
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+  0xffffffffff600000 0xffffffffff601000     0x1000        0x0 [vsyscall]
+```
+so what we need here is :
+      0x555555554000     0x555555555000     0x1000        0x0 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/memory
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+      0x555555756000     0x555555777000    0x21000        0x0 [heap]
+
+
+# 4 Effect of type of memory on a program
+## 1. Effect of global variables
+when x=10    size of the binary= 11112
+when x=100   size of the binary= 11216 
+when x=1000  size of the binary= 12128
+when x=10000 size of the binary= 21128
+
+## 2. Effect of dynamic variables
+when x=10    size of the binary= 11048
+when x=100   size of the binary= 11048
+when x=1000  size of the binary= 11048
+when x=10000 size of the binary= 11048
+
+## 3. Testing the limits of dynamic memory
+Maximum amount (in bytes) of dynamic memory you can acquire.
+Size of heap at each breakpoint.
+
+in the beginning:
+```
+process 9170
+Mapped address spaces:
+
+          Start Addr           End Addr       Size     Offset objfile
+      0x555555554000     0x555555555000     0x1000        0x0 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/malloc_limits
+      0x555555754000     0x555555755000     0x1000        0x0 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/malloc_limits
+      0x555555755000     0x555555756000     0x1000     0x1000 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/malloc_limits
+      0x7ffff7a3a000     0x7ffff7bcf000   0x195000        0x0 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7bcf000     0x7ffff7dcf000   0x200000   0x195000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dcf000     0x7ffff7dd3000     0x4000   0x195000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dd3000     0x7ffff7dd5000     0x2000   0x199000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dd5000     0x7ffff7dd9000     0x4000        0x0
+      0x7ffff7dd9000     0x7ffff7dfc000    0x23000        0x0 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7fc7000     0x7ffff7fc9000     0x2000        0x0
+      0x7ffff7ff5000     0x7ffff7ff8000     0x3000        0x0
+      0x7ffff7ff8000     0x7ffff7ffa000     0x2000        0x0 [vvar]
+      0x7ffff7ffa000     0x7ffff7ffc000     0x2000        0x0 [vdso]
+      0x7ffff7ffc000     0x7ffff7ffd000     0x1000    0x23000 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7ffd000     0x7ffff7ffe000     0x1000    0x24000 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7ffe000     0x7ffff7fff000     0x1000        0x0
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+  0xffffffffff600000 0xffffffffff601000     0x1000        0x0 [vsyscall]
+```
+in the end:
+```
+process 9170
+Mapped address spaces:
+
+          Start Addr           End Addr       Size     Offset objfile
+      0x555555554000     0x555555555000     0x1000        0x0 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/malloc_limits
+      0x555555754000     0x555555755000     0x1000        0x0 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/malloc_limits
+      0x555555755000     0x555555756000     0x1000     0x1000 /import/linux/home1/wli100/Code/cs220/F17-L2-RichardLee0211/malloc_limits
+      0x555555756000     0x555555778000    0x22000        0x0 [heap]
+      0x7fff70000000     0x7fff70021000    0x21000        0x0
+      0x7fff70021000     0x7fff74000000  0x3fdf000        0x0
+      0x7fff77c30000     0x7ffff7a3a000 0x7fe0a000        0x0
+      0x7ffff7a3a000     0x7ffff7bcf000   0x195000        0x0 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7bcf000     0x7ffff7dcf000   0x200000   0x195000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dcf000     0x7ffff7dd3000     0x4000   0x195000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dd3000     0x7ffff7dd5000     0x2000   0x199000 /lib/x86_64-linux-gnu/libc-2.24.so
+      0x7ffff7dd5000     0x7ffff7dd9000     0x4000        0x0
+      0x7ffff7dd9000     0x7ffff7dfc000    0x23000        0x0 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7e04000     0x7ffff7fc9000   0x1c5000        0x0
+      0x7ffff7fd4000     0x7ffff7ff8000    0x24000        0x0
+      0x7ffff7ff8000     0x7ffff7ffa000     0x2000        0x0 [vvar]
+      0x7ffff7ffa000     0x7ffff7ffc000     0x2000        0x0 [vdso]
+      0x7ffff7ffc000     0x7ffff7ffd000     0x1000    0x23000 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7ffd000     0x7ffff7ffe000     0x1000    0x24000 /lib/x86_64-linux-gnu/ld-2.24.so
+      0x7ffff7ffe000     0x7ffff7fff000     0x1000        0x0
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+  0xffffffffff600000 0xffffffffff601000     0x1000        0x0 [vsyscall]
+```
+so what we need here is:
+      0x555555756000     0x555555778000    0x22000        0x0 [heap]
+so max mount is 22000 bytes
+
+## 4 Testing limits of stack memory
+when x=10:
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+when x=100:
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+when x=1000:
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+when x=10000:
+      0x7ffffffde000     0x7ffffffff000    0x21000        0x0 [stack]
+
+
+
+
+

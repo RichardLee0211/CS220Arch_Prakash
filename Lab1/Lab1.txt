@@ -1,0 +1,70 @@
+# 3
+1. number of iterations of each of for, while, and do-while loops per second.
+myAnswer:
+forLoop: 570000000
+whileLoop: 510000000
+doWhileLoop: 520000000
+
+2. average time of 3 trials whre n = 1000000000 for each of the 3 loops
+myAnswer:
+Elapsed of forLoop: 1.989502 seconds
+Elapsed of whileLoop: 2.145222 seconds
+Elapsed of doWhileLoop: 2.145990 seconds
+
+3. Number of instructions in each of the 3 functions.
+myAnswer:
+forLoop: 12
+whileLoop: 10
+doWhileLoop: 9
+
+4. 2~3 sentences explaining why you think one type of loop rums faster that the other.
+myAnswer:
+forLoop runs faster that two others
+The reason is that instructions of forLoop don't need to wait previous instructions for a long time. And access to register more often than  memory.
+
+number of bytes
+
+forLoop: 31 bytes
+00000000000006f0 <forLoop>:
+ 6f0:	55                   	push   %rbp
+ 6f1:	48 89 e5             	mov    %rsp,%rbp
+ 6f4:	89 7d ec             	mov    %edi,-0x14(%rbp)
+ 6f7:	c7 45 fc 00 00 00 00 	movl   $0x0,-0x4(%rbp)
+ 6fe:	eb 04                	jmp    704 <forLoop+0x14>
+ 700:	83 45 fc 01          	addl   $0x1,-0x4(%rbp)
+ 704:	8b 45 fc             	mov    -0x4(%rbp),%eax
+ 707:	3b 45 ec             	cmp    -0x14(%rbp),%eax
+ 70a:	72 f4                	jb     700 <forLoop+0x10>
+ 70c:	90                   	nop
+ 70d:	5d                   	pop    %rbp
+ 70e:	c3                   	retq   
+
+whileLoop: 22 bytes
+000000000000070f <whileLoop>:
+ 70f:	55                   	push   %rbp
+ 710:	48 89 e5             	mov    %rsp,%rbp
+ 713:	89 7d fc             	mov    %edi,-0x4(%rbp)
+ 716:	eb 04                	jmp    71c <whileLoop+0xd>
+ 718:	83 6d fc 01          	subl   $0x1,-0x4(%rbp)
+ 71c:	83 7d fc 00          	cmpl   $0x0,-0x4(%rbp)
+ 720:	75 f6                	jne    718 <whileLoop+0x9>
+ 722:	90                   	nop
+ 723:	5d                   	pop    %rbp
+ 724:	c3                   	retq   
+
+doWhileLoop: 20 bytes
+0000000000000725 <doWhileLoop>:
+ 725:	55                   	push   %rbp
+ 726:	48 89 e5             	mov    %rsp,%rbp
+ 729:	89 7d fc             	mov    %edi,-0x4(%rbp)
+ 72c:	83 6d fc 01          	subl   $0x1,-0x4(%rbp)
+ 730:	83 7d fc 00          	cmpl   $0x0,-0x4(%rbp)
+ 734:	75 f6                	jne    72c <doWhileLoop+0x7>
+ 736:	90                   	nop
+ 737:	5d                   	pop    %rbp
+ 738:	c3                   	retq   
+
+# 4
+	linux-vdso.so.1 (0x00007ffc416d4000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f55d667e000)
+	/lib64/ld-linux-x86-64.so.2 (0x000056485ea35000)
