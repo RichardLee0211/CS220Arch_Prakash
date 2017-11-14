@@ -639,6 +639,7 @@ Disassembly of section .text:
      c46:	5d                   	pop    ebp
      c47:	c3                   	ret
 
+// read 2 ints and return address
 00000c48 <read_2_numbers>:
      c48:	55                   	push   ebp
      c49:	89 e5                	mov    ebp,esp
@@ -646,6 +647,8 @@ Disassembly of section .text:
      c4c:	81 ec 14 02 00 00    	sub    esp,0x214
      c52:	e8 79 fa ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
      c57:	81 c3 a9 23 00 00    	add    ebx,0x23a9
+
+     // initial [ebp-0x210] as a array of 200
      c5d:	83 ec 04             	sub    esp,0x4
      c60:	68 00 02 00 00       	push   0x200
      c65:	6a 00                	push   0x0
@@ -653,11 +656,14 @@ Disassembly of section .text:
      c6d:	50                   	push   eax
      c6e:	e8 fd f9 ff ff       	call   670 <memset@plt>
      c73:	83 c4 10             	add    esp,0x10
+
+     // malloc space of 2 ints, return address to [ebp-0xc]
      c76:	83 ec 0c             	sub    esp,0xc
      c79:	6a 08                	push   0x8
      c7b:	e8 80 f9 ff ff       	call   600 <malloc@plt>
      c80:	83 c4 10             	add    esp,0x10
      c83:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+
      c86:	83 ec 04             	sub    esp,0x4
      c89:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      c8c:	68 ff 01 00 00       	push   0x1ff
@@ -665,6 +671,8 @@ Disassembly of section .text:
      c97:	50                   	push   eax
      c98:	e8 43 f9 ff ff       	call   5e0 <fgets@plt>
      c9d:	83 c4 10             	add    esp,0x10
+
+     // scanf for 2 ints
      ca0:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      ca3:	83 c0 04             	add    eax,0x4
      ca6:	50                   	push   eax
@@ -675,6 +683,9 @@ Disassembly of section .text:
      cb7:	50                   	push   eax
      cb8:	e8 93 f9 ff ff       	call   650 <__isoc99_sscanf@plt>
      cbd:	83 c4 10             	add    esp,0x10
+
+     // if read 2 ints, return [ebp-0xc]
+     // else return 0x0
      cc0:	89 45 f0             	mov    DWORD PTR [ebp-0x10],eax
      cc3:	83 7d f0 02          	cmp    DWORD PTR [ebp-0x10],0x2
      cc7:	74 07                	je     cd0 <read_2_numbers+0x88>
@@ -941,6 +952,7 @@ Disassembly of section .text:
      f3a:	e8 91 f7 ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
      f3f:	81 c3 c1 20 00 00    	add    ebx,0x20c1 // ??
 
+// call phase3_helper([ebp+0x8])
      f45:	83 ec 0c             	sub    esp,0xc
      f48:	ff 75 08             	push   DWORD PTR [ebp+0x8]
      f4b:	e8 7a 03 00 00       	call   12ca <phase3_helper>
@@ -1258,6 +1270,7 @@ Disassembly of section .text:
     12c6:	8b 04 24             	mov    eax,DWORD PTR [esp]
     12c9:	c3                   	ret
 
+// read two numbers, if success enter p3c1
 000012ca <phase3_helper>:
     12ca:	8b 44 24 04          	mov    eax,DWORD PTR [esp+0x4]
     12ce:	50                   	push   eax
@@ -1266,6 +1279,7 @@ Disassembly of section .text:
     12d7:	75 05                	jne    12de <p3c1>
     12d9:	e8 22 f5 ff ff       	call   800 <explode>
 
+// if the first int >= 0x5, first int in $ecx
 000012de <p3c1>:
     12de:	59                   	pop    ecx
     12df:	8b 08                	mov    ecx,DWORD PTR [eax]
@@ -1273,26 +1287,43 @@ Disassembly of section .text:
     12e4:	77 05                	ja     12eb <p3c2>
     12e6:	e8 15 f5 ff ff       	call   800 <explode>
 
+// esi, first int
+// edi, second int
 000012eb <p3c2>:
     12eb:	56                   	push   esi
     12ec:	57                   	push   edi
     12ed:	53                   	push   ebx
-    12ee:	89 ce                	mov    esi,ecx
-    12f0:	8b 78 04             	mov    edi,DWORD PTR [eax+0x4]
+    12ee:	89 ce                	mov    esi,ecx // the first int
+    12f0:	8b 78 04             	mov    edi,DWORD PTR [eax+0x4] // the second int
     12f3:	b9 00 00 00 00       	mov    ecx,0x0
     12f8:	ba 01 00 00 00       	mov    edx,0x1
     12fd:	bb 02 00 00 00       	mov    ebx,0x2
 
+// while(ebx++ != the first int)
+// ecx+=edx;
+// swap edx ecx;
+// ecx edx
+// 0x0 0x1
+// 0x1 0x1
+// 0x1 0x2
+// 0x2 0x3
+// 0x3 0x5
+// 0x5 0x8
+// 0x8 0xD
+// ...
+// like at edx, it's Fibonacci array
 00001302 <loop_start>:
-    1302:	39 de                	cmp    esi,ebx
+    1302:	39 de                	cmp    esi,ebx // ebx == the first int, start from 0x2
     1304:	74 0d                	je     1313 <loop_done>
-    1306:	83 c3 01             	add    ebx,0x1
-    1309:	01 d1                	add    ecx,edx
-    130b:	89 d0                	mov    eax,edx
-    130d:	89 ca                	mov    edx,ecx
-    130f:	89 c1                	mov    ecx,eax
+    1306:	83 c3 01             	add    ebx,0x1 // ebx+=0x1; 0x2+=0x1
+
+    1309:	01 d1                	add    ecx,edx // ecx+=edx; 0x0+=0x1
+    130b:	89 d0                	mov    eax,edx // eax=edx; 0x1
+    130d:	89 ca                	mov    edx,ecx // edx=ecx;
+    130f:	89 c1                	mov    ecx,eax // ecx=eax;
     1311:	eb ef                	jmp    1302 <loop_start>
 
+// second int is the first int element of Fibonacci array
 00001313 <loop_done>:
     1313:	39 fa                	cmp    edx,edi
     1315:	74 05                	je     131c <p3c3>
