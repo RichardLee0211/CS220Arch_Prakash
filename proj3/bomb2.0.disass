@@ -311,6 +311,8 @@ Disassembly of section .text:
      8a7:	83 ec 24             	sub    esp,0x24
      8aa:	e8 21 fe ff ff       	call   6d0 <__x86.get_pc_thunk.bx>
      8af:	81 c3 51 27 00 00    	add    ebx,0x2751
+
+     // get argument and save in [ebp-0x1c], and it shoud be 0x60 < low byte <= 0x7a
      8b5:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
      8b8:	88 45 e4             	mov    BYTE PTR [ebp-0x1c],al
      8bb:	80 7d e4 60          	cmp    BYTE PTR [ebp-0x1c],0x60
@@ -318,33 +320,43 @@ Disassembly of section .text:
      8c1:	80 7d e4 7a          	cmp    BYTE PTR [ebp-0x1c],0x7a
      8c5:	7e 05                	jle    8cc <phase6_decoder+0x29>
      8c7:	e8 34 ff ff ff       	call   800 <explode>
-     8cc:	8b 8b 4c 00 00 00    	mov    ecx,DWORD PTR [ebx+0x4c]
+
+     // get a global varible and edit it and saved in [ebp-0xc]
+     8cc:	8b 8b 4c 00 00 00    	mov    ecx,DWORD PTR [ebx+0x4c] // global
      8d2:	ba c9 42 16 b2       	mov    edx,0xb21642c9
+
      8d7:	89 c8                	mov    eax,ecx
-     8d9:	f7 e2                	mul    edx
+     8d9:	f7 e2                	mul    edx // edx:eax = eax*edx
      8db:	89 d0                	mov    eax,edx
      8dd:	c1 e8 04             	shr    eax,0x4
      8e0:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+
      8e3:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      8e6:	6b c0 17             	imul   eax,eax,0x17
      8e9:	29 c1                	sub    ecx,eax
+
      8eb:	89 c8                	mov    eax,ecx
      8ed:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+
+     // handling input argument
      8f0:	0f be 55 e4          	movsx  edx,BYTE PTR [ebp-0x1c]
      8f4:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      8f7:	01 d0                	add    eax,edx
      8f9:	83 f8 60             	cmp    eax,0x60
      8fc:	76 1b                	jbe    919 <phase6_decoder+0x76>
+
      8fe:	0f be 55 e4          	movsx  edx,BYTE PTR [ebp-0x1c]
      902:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      905:	01 d0                	add    eax,edx
      907:	83 f8 7a             	cmp    eax,0x7a
+
      90a:	77 0d                	ja     919 <phase6_decoder+0x76>
      90c:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      90f:	89 c2                	mov    edx,eax
      911:	0f b6 45 e4          	movzx  eax,BYTE PTR [ebp-0x1c]
      915:	01 d0                	add    eax,edx
      917:	eb 0e                	jmp    927 <phase6_decoder+0x84>
+
      919:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      91c:	89 c2                	mov    edx,eax
      91e:	0f b6 45 e4          	movzx  eax,BYTE PTR [ebp-0x1c]
@@ -1212,7 +1224,7 @@ Disassembly of section .text:
     116a:	8d 95 f0 fd ff ff    	lea    edx,[ebp-0x210] // global??
     1170:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
     1173:	01 d0                	add    eax,edx
-    1175:	88 08                	mov    BYTE PTR [eax],cl
+    1175:	88 08                	mov    BYTE PTR [eax],cl // ??
     1177:	83 45 f4 01          	add    DWORD PTR [ebp-0xc],0x1
 
 // if [ebp-0xc] <= 0x5, return to loop
