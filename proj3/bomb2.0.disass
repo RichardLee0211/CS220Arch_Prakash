@@ -304,6 +304,7 @@ Disassembly of section .text:
      8a1:	5d                   	pop    ebp
      8a2:	c3                   	ret
 
+// phase6_decoder((int) char)
 000008a3 <phase6_decoder>:
      8a3:	55                   	push   ebp
      8a4:	89 e5                	mov    ebp,esp
@@ -313,6 +314,7 @@ Disassembly of section .text:
      8af:	81 c3 51 27 00 00    	add    ebx,0x2751
 
      // get argument and save in [ebp-0x1c], and it shoud be 0x60 < low byte <= 0x7a
+     // that is to say, argument must be letter [a-z][A-Z]
      8b5:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
      8b8:	88 45 e4             	mov    BYTE PTR [ebp-0x1c],al
      8bb:	80 7d e4 60          	cmp    BYTE PTR [ebp-0x1c],0x60
@@ -321,48 +323,59 @@ Disassembly of section .text:
      8c5:	7e 05                	jle    8cc <phase6_decoder+0x29>
      8c7:	e8 34 ff ff ff       	call   800 <explode>
 
-     // get a global varible and edit it and saved in [ebp-0xc]
-     8cc:	8b 8b 4c 00 00 00    	mov    ecx,DWORD PTR [ebx+0x4c] // global
+     // get a global varible and edit it and saved in [ebp-0xc], 0xE
+     8cc:	8b 8b 4c 00 00 00    	mov    ecx,DWORD PTR [ebx+0x4c] // global 0xce969388
      8d2:	ba c9 42 16 b2       	mov    edx,0xb21642c9
 
      8d7:	89 c8                	mov    eax,ecx
      8d9:	f7 e2                	mul    edx // edx:eax = eax*edx
      8db:	89 d0                	mov    eax,edx
      8dd:	c1 e8 04             	shr    eax,0x4
-     8e0:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+     8e0:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax // 0x08FB6A96
 
      8e3:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      8e6:	6b c0 17             	imul   eax,eax,0x17
      8e9:	29 c1                	sub    ecx,eax
 
      8eb:	89 c8                	mov    eax,ecx
-     8ed:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+     8ed:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax // 0xE
 
-     // handling input argument
+     // if argument char + globalEdited 0xE <= 0x60
+     // ?? strange, char belong to [0x61, 0x7A], so impossible
      8f0:	0f be 55 e4          	movsx  edx,BYTE PTR [ebp-0x1c]
      8f4:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      8f7:	01 d0                	add    eax,edx
      8f9:	83 f8 60             	cmp    eax,0x60
      8fc:	76 1b                	jbe    919 <phase6_decoder+0x76>
 
+     // global string "egwcit" "printf"
+     // else if argument char + globalEdited 0xE > 0x7a
+     //         char - 0xb returned
+     // char belongs to [0x61, 0x7A], so last 14 letter in ascii
      8fe:	0f be 55 e4          	movsx  edx,BYTE PTR [ebp-0x1c]
      902:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      905:	01 d0                	add    eax,edx
      907:	83 f8 7a             	cmp    eax,0x7a
-
      90a:	77 0d                	ja     919 <phase6_decoder+0x76>
+
+     // else, argument char + globalEdited 0xE save in [ebp-0xd] and returned
      90c:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      90f:	89 c2                	mov    edx,eax
      911:	0f b6 45 e4          	movzx  eax,BYTE PTR [ebp-0x1c]
      915:	01 d0                	add    eax,edx
      917:	eb 0e                	jmp    927 <phase6_decoder+0x84>
 
+     // argument char + globalEdited 0xE - 0x19 save in [ebp-0xd]
+     // AKA char - 0xb save in [ebp-0xd] and returnd
      919:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
      91c:	89 c2                	mov    edx,eax
      91e:	0f b6 45 e4          	movzx  eax,BYTE PTR [ebp-0x1c]
      922:	01 d0                	add    eax,edx
      924:	83 e8 19             	sub    eax,0x19
+
      927:	88 45 f3             	mov    BYTE PTR [ebp-0xd],al
+
+     // return [ebp-0xd]
      92a:	0f b6 45 f3          	movzx  eax,BYTE PTR [ebp-0xd]
      92e:	83 c4 24             	add    esp,0x24
      931:	5b                   	pop    ebx
@@ -1211,8 +1224,9 @@ Disassembly of section .text:
     114e:	8b 55 f4             	mov    edx,DWORD PTR [ebp-0xc]
     1151:	8b 45 f0             	mov    eax,DWORD PTR [ebp-0x10]
     1154:	01 d0                	add    eax,edx
-    1156:	0f b6 00             	movzx  eax,BYTE PTR [eax] // char 1 byte to al ??
-    1159:	0f be c0             	movsx  eax,al // ??
+    1156:	0f b6 00             	movzx  eax,BYTE PTR [eax] // char 1 byte to al,
+                                                                and extend rest with zero
+    1159:	0f be c0             	movsx  eax,al // extend rest with signed
 
     // call phase6_decoder(char char)
     115c:	83 ec 0c             	sub    esp,0xc
@@ -1221,23 +1235,29 @@ Disassembly of section .text:
     1165:	83 c4 10             	add    esp,0x10
 
     1168:	89 c1                	mov    ecx,eax
-    116a:	8d 95 f0 fd ff ff    	lea    edx,[ebp-0x210] // global??
-    1170:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+    116a:	8d 95 f0 fd ff ff    	lea    edx,[ebp-0x210] // string ?? a wild place with 0x00 everywhere
+    1170:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc] // i, loop counter
     1173:	01 d0                	add    eax,edx
-    1175:	88 08                	mov    BYTE PTR [eax],cl // ??
+    1175:	88 08                	mov    BYTE PTR [eax],cl // store back string
     1177:	83 45 f4 01          	add    DWORD PTR [ebp-0xc],0x1
 
-// if [ebp-0xc] <= 0x5, return to loop
+    // if [ebp-0xc] <= 0x5, return to loop
+    // 6 chars
     117b:	83 7d f4 05          	cmp    DWORD PTR [ebp-0xc],0x5
     117f:	7e cd                	jle    114e <phase6+0x3a>
 
     1181:	c7 45 f4 00 00 00 00 	mov    DWORD PTR [ebp-0xc],0x0
     1188:	eb 2c                	jmp    11b6 <phase6+0xa2>
+
+    // loop2start
+    // get char
     118a:	8d 95 f0 fd ff ff    	lea    edx,[ebp-0x210]
     1190:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
     1193:	01 d0                	add    eax,edx
     1195:	0f b6 10             	movzx  edx,BYTE PTR [eax]
-    1198:	8d 8b 50 00 00 00    	lea    ecx,[ebx+0x50]
+
+    // compare encoded 6 char with global string "egwcit"
+    1198:	8d 8b 50 00 00 00    	lea    ecx,[ebx+0x50] // global string address
     119e:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
     11a1:	01 c8                	add    eax,ecx
     11a3:	0f b6 00             	movzx  eax,BYTE PTR [eax]
@@ -1245,10 +1265,14 @@ Disassembly of section .text:
     11a8:	74 07                	je     11b1 <phase6+0x9d>
     11aa:	e8 51 f6 ff ff       	call   800 <explode>
     11af:	eb 01                	jmp    11b2 <phase6+0x9e>
+    // loop count ++
     11b1:	90                   	nop
     11b2:	83 45 f4 01          	add    DWORD PTR [ebp-0xc],0x1
+
+    // if [ebp-0xc] <= 0x5, return to loop above
     11b6:	83 7d f4 05          	cmp    DWORD PTR [ebp-0xc],0x5
     11ba:	7e ce                	jle    118a <phase6+0x76>
+
     11bc:	83 ec 0c             	sub    esp,0xc
     11bf:	8d 83 54 e5 ff ff    	lea    eax,[ebx-0x1aac]
     11c5:	50                   	push   eax
