@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/Users/richardlee/Code/cs220/cs220mytest/Lab11/build/bin",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk   -o CMakeFiles/multifork.dir/multifork.c.o   -c /Users/richardlee/Code/cs220/cs220mytest/Lab11/src/multifork.c",
+  "file": "/Users/richardlee/Code/cs220/cs220mytest/Lab11/src/multifork.c"
+},
+{
+  "directory": "/Users/richardlee/Code/cs220/cs220mytest/Lab11/build/bin",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk   -o CMakeFiles/fork.dir/fork.c.o   -c /Users/richardlee/Code/cs220/cs220mytest/Lab11/src/fork.c",
+  "file": "/Users/richardlee/Code/cs220/cs220mytest/Lab11/src/fork.c"
+}
+]
