@@ -1,3 +1,45 @@
 [submodule "F17-P2-happy-codings"]
 	path = F17-P2-happy-codings
 	url = https://github.com/bucs220/F17-P2-happy-codings
+[submodule "F17-A1-RichardLee0211"]
+	path = F17-A1-RichardLee0211
+	url = https://github.com/bucs220/F17-A1-RichardLee0211
+[submodule "F17-A12-RichardLee0211"]
+	path = F17-A12-RichardLee0211
+	url = https://github.com/bucs220/F17-A12-RichardLee0211
+[submodule "F17-A10-RichardLee0211"]
+	path = F17-A10-RichardLee0211
+	url = https://github.com/bucs220/F17-A10-RichardLee0211
+[submodule "F17-A3-RichardLee0211"]
+	path = F17-A3-RichardLee0211
+	url = https://github.com/bucs220/F17-A3-RichardLee0211
+[submodule "F17-A4-RichardLee0211"]
+	path = F17-A4-RichardLee0211
+	url = https://github.com/bucs220/F17-A4-RichardLee0211
+[submodule "F17-A5-RichardLee0211"]
+	path = F17-A5-RichardLee0211
+	url = https://github.com/bucs220/F17-A5-RichardLee0211
+[submodule "F17-A6-RichardLee0211"]
+	path = F17-A6-RichardLee0211
+	url = https://github.com/bucs220/F17-A6-RichardLee0211
+[submodule "F17-A7-RichardLee0211"]
+	path = F17-A7-RichardLee0211
+	url = https://github.com/bucs220/F17-A7-RichardLee0211
+[submodule "F17-A8-RichardLee0211"]
+	path = F17-A8-RichardLee0211
+	url = https://github.com/bucs220/F17-A8-RichardLee0211
+[submodule "F17-L1-RichardLee0211"]
+	path = F17-L1-RichardLee0211
+	url = https://github.com/bucs220/F17-L1-RichardLee0211
+[submodule "F17-L2-RichardLee0211"]
+	path = F17-L2-RichardLee0211
+	url = https://github.com/bucs220/F17-L2-RichardLee0211
+[submodule "F17-P1-happy-coding"]
+	path = F17-P1-happy-coding
+	url = https://github.com/bucs220/F17-P1-happy-coding
+[submodule "F17-P4-1-RichardLee0211"]
+	path = F17-P4-1-RichardLee0211
+	url = https://github.com/bucs220/F17-P4-1-RichardLee0211
+[submodule "cs220-f17-lab0-RichardLee0211"]
+	path = cs220-f17-lab0-RichardLee0211
+	url = https://github.com/bucs220/cs220-f17-lab0-RichardLee0211
