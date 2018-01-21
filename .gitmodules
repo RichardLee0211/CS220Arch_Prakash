@@ -43,3 +43,6 @@
 [submodule "cs220-f17-lab0-RichardLee0211"]
 	path = cs220-f17-lab0-RichardLee0211
 	url = https://github.com/bucs220/cs220-f17-lab0-RichardLee0211
+[submodule "demo-content"]
+	path = demo-content
+	url = https://github.com/bucs220/demo-content
