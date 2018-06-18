@@ -73,14 +73,18 @@ tutorial about submodule, here: https://git-scm.com/book/en/v2/Git-Tools-Submodu
 wait,
 when I edit and update the main project, it's fine. It's like any other git repository maintainance
 when I edit and update a submodule, I will need to
-    0. git check <branchName>
-    1. update the submodule to a new commit
-        git status in Main project, could see which submodule has new commits
-        main project and submodule should have a nice interface, and two parts of code should be separated properly
-        tw
+    0. cd <submodule> && git check <branchName> and do the edit
+    1. commit the submodule to a new commit
+        for main project, submodule is like a file, instead of a fold
+        cd ../ && git status in Main project, could see which submodule has new commits
+        others: main project and submodule should have a nice interface, and two parts of code should be separated properly
     2. tell main repository to use the new commit of submodule
+        git add -A && git commit -am "update submoduleA to a new commit"
+        git push
+
 when local edit and upstream edit have conflicts, merge them
 and for now, leave "branch&submodule" problem alone
+
 ## content
 Lab0        git
 Lab1        git CONTINUE
