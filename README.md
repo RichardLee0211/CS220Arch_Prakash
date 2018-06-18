@@ -57,7 +57,7 @@ tutorial about submodule, here: https://git-scm.com/book/en/v2/Git-Tools-Submodu
     # publishing submodule changes
     git push --recurse-submodules=check
     git config push.recurseSubmodules check
-    git config push.recurseSubmodules no-demand
+    git config push.recurseSubmodules on-demand
 
     # merging submodule changes
     cd DbConnector/
@@ -89,11 +89,27 @@ and because we doesn't push the submodule to github, when we click on the link t
 
 when I do git status in submodule, it shows submodule isn't on any branch, but on detached HEAD
 
-is there a way to push all the commits to upstreams ??
+is there a way to push all the commits to upstreams ?:
+Yes, there. And now I understand this.
+git push --recurse-submodule=on-demand
+or
+git config push.recurseSubmodules on-demand
 
 when local edit and upstream edit have conflicts, merge them
 and for now, leave "branch&submodule" problem alone
 
 ## content
+### labs
 Lab0        git
 Lab1        git CONTINUE
+...
+### Assginments
+F17-A12-RichardLee0211          mini-shell
+F17-A10-RichardLee0211          macros rotate bt
+...
+
+### projects
+F17-P1-RichardLee0211           poker
+F17-P2-RichardLee0211           parse database, student and courses
+proj3                           bomb2.0
+F17-P4-RichardLee0211           virtual memory, page
