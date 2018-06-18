@@ -75,12 +75,21 @@ when I edit and update the main project, it's fine. It's like any other git repo
 when I edit and update a submodule, I will need to
     0. cd <submodule> && git check <branchName> and do the edit
     1. commit the submodule to a new commit
-        for main project, submodule is like a file, instead of a fold
-        cd ../ && git status in Main project, could see which submodule has new commits
+        git commit -am "this is a new commit of submodule"
         others: main project and submodule should have a nice interface, and two parts of code should be separated properly
     2. tell main repository to use the new commit of submodule
+        for main project, submodule is like a file, instead of a fold
+        cd ../ && git status in Main project, could see which submodule has new commits
         git add -A && git commit -am "update submoduleA to a new commit"
         git push
+
+if we edit local submodule, commit a new commit, then exit and commit in main project, and push main project to upstream,
+what heppen is that github will accept this main project commit because it just contain a link to submodule repository with hash number
+and because we doesn't push the submodule to github, when we click on the link to submodule in github, 404 happens
+
+when I do git status in submodule, it shows submodule isn't on any branch, but on detached HEAD
+
+is there a way to push all the commits to upstreams ??
 
 when local edit and upstream edit have conflicts, merge them
 and for now, leave "branch&submodule" problem alone
