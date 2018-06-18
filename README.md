@@ -73,6 +73,7 @@ tutorial about submodule, here: https://git-scm.com/book/en/v2/Git-Tools-Submodu
 wait,
 when I edit and update the main project, it's fine. It's like any other git repository maintainance
 when I edit and update a submodule, I will need to
+    0. git check <branchName>
     1. update the submodule to a new commit
         git status in Main project, could see which submodule has new commits
         main project and submodule should have a nice interface, and two parts of code should be separated properly
