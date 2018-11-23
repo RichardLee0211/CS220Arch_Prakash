@@ -99,11 +99,23 @@ when local edit and upstream edit have conflicts, merge them
 and for now, leave "branch&submodule" problem alone
 
 ## content
+
 ### labs
 Lab0        git
 Lab1        git CONTINUE
 ...
+
 ### Assginments
+when I wanna create exercise questions set, it could be a good reference
+F17-A1-RichardLee0211          basic bytes operate
+F17-A3-RichardLee0211
+F17-A4-RichardLee0211
+F17-A5-RichardLee0211
+F17-A6-RichardLee0211
+F17-A7-RichardLee0211
+F17-A8-RichardLee0211
+F17-A9-RichardLee0211
+F17-A10-RichardLee0211          macros rotate bt
 F17-A12-RichardLee0211          mini-shell
 F17-A10-RichardLee0211          macros rotate bt
 ...
@@ -111,5 +123,5 @@ F17-A10-RichardLee0211          macros rotate bt
 ### projects
 F17-P1-RichardLee0211           poker
 F17-P2-RichardLee0211           parse database, student and courses
-proj3                           bomb2.0
+F17-P3                          bomb2.0
 F17-P4-RichardLee0211           virtual memory, page
